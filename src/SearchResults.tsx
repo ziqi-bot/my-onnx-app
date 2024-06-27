@@ -90,10 +90,8 @@
 
 
 
-
-
 import React from 'react';
-import { Table, TableHead, TableBody, TableRow, TableCell } from '@mui/material';
+import { Table, TableHead, TableBody, TableRow, TableCell, Button } from '@mui/material';
 
 interface Result {
   id: number;
@@ -109,17 +107,19 @@ interface Result {
 interface SearchResultsProps {
   searchResults: Result[];
   mode: 'latest' | 'all';
+  onDelete: (id: number) => void;
 }
 
 const classNames = ["pedestrian", "biker", "skater", "cart", "car", "bus"];
 
-const SearchResults: React.FC<SearchResultsProps> = ({ searchResults, mode }) => {
+const SearchResults: React.FC<SearchResultsProps> = ({ searchResults, mode, onDelete }) => {
   return (
     <Table>
       <TableHead>
         <TableRow>
           <TableCell>{mode === 'latest' ? 'Class' : 'File'}</TableCell>
           <TableCell>Details</TableCell>
+          {mode === 'all' && <TableCell>Action</TableCell>}
         </TableRow>
       </TableHead>
       <TableBody>
@@ -137,9 +137,14 @@ const SearchResults: React.FC<SearchResultsProps> = ({ searchResults, mode }) =>
               <TableCell>
                 {classNames.map((className) => (
                   <div key={className}>
-                    {className}: {(result as any)[className] !== undefined ? (result as any)[className] : 0}
+                    {className}: {result[className as keyof Result] !== undefined ? result[className as keyof Result] : 0}
                   </div>
                 ))}
+              </TableCell>
+              <TableCell>
+                <Button variant="contained" color="secondary" onClick={() => onDelete(result.id)}>
+                  Delete
+                </Button>
               </TableCell>
             </TableRow>
           ))
