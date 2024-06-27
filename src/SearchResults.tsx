@@ -90,11 +90,6 @@
 
 
 
-
-
-
-
-
 import React from 'react';
 import { Table, TableHead, TableBody, TableRow, TableCell, Button } from '@mui/material';
 
@@ -118,6 +113,11 @@ interface SearchResultsProps {
 const classNames = ["pedestrian", "biker", "skater", "cart", "car", "bus"];
 
 const SearchResults: React.FC<SearchResultsProps> = ({ searchResults, mode, onDelete }) => {
+  if (!Array.isArray(searchResults)) {
+    console.error('searchResults is not an array:', searchResults);
+    return null;
+  }
+
   return (
     <Table>
       <TableHead>
