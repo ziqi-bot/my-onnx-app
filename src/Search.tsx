@@ -73,7 +73,7 @@ const Search: React.FC<SearchProps> = ({ onSearchResults }) => {
   const [latestOrAll, setLatestOrAll] = useState<'latest' | 'all'>('latest');
 
   const handleSearch = async () => {
-    const apiUrl = latestOrAll === 'latest' ? '/api/results' : '/api/allResults';
+    const apiUrl = latestOrAll === 'latest' ? 'api/results' : 'api/allResults';
 
     try {
       const response = await fetch(`${process.env.REACT_APP_API_URL}${apiUrl}`);
