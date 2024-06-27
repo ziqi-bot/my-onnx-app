@@ -1,12 +1,17 @@
+
+
+
+
+
 // import React, { useState } from 'react';
 // import { Box, Button, MenuItem, Select, Typography } from '@mui/material';
 
 // interface SearchProps {
-//   onSearchResults: (results: any[]) => void;
+//   onSearchResults: (results: any[], mode: 'latest' | 'all') => void;
 // }
 
 // const Search: React.FC<SearchProps> = ({ onSearchResults }) => {
-//   const [latestOrAll, setLatestOrAll] = useState('latest');
+//   const [latestOrAll, setLatestOrAll] = useState<'latest' | 'all'>('latest');
 
 //   const handleSearch = async () => {
 //     const apiUrl = latestOrAll === 'latest' ? '/api/results' : '/api/allResults';
@@ -14,7 +19,7 @@
 //     try {
 //       const response = await fetch(`${process.env.REACT_APP_API_URL}${apiUrl}`);
 //       const data = await response.json();
-//       onSearchResults(data.results || []);
+//       onSearchResults(data.results || [], latestOrAll);
 //     } catch (error) {
 //       console.error('Error fetching search results:', error);
 //     }
@@ -23,11 +28,11 @@
 //   return (
 //     <Box>
 //       <Typography variant="h6" gutterBottom>
-//         Search Detection Results
+        
 //       </Typography>
 //       <Select
 //         value={latestOrAll}
-//         onChange={(e) => setLatestOrAll(e.target.value)}
+//         onChange={(e) => setLatestOrAll(e.target.value as 'latest' | 'all')}
 //         sx={{ marginRight: '10px' }}
 //       >
 //         <MenuItem value="latest">Latest</MenuItem>
@@ -56,6 +61,7 @@
 
 
 
+
 import React, { useState } from 'react';
 import { Box, Button, MenuItem, Select, Typography } from '@mui/material';
 
@@ -72,7 +78,7 @@ const Search: React.FC<SearchProps> = ({ onSearchResults }) => {
     try {
       const response = await fetch(`${process.env.REACT_APP_API_URL}${apiUrl}`);
       const data = await response.json();
-      onSearchResults(data.results || [], latestOrAll);
+      onSearchResults(data, latestOrAll);
     } catch (error) {
       console.error('Error fetching search results:', error);
     }
@@ -81,7 +87,7 @@ const Search: React.FC<SearchProps> = ({ onSearchResults }) => {
   return (
     <Box>
       <Typography variant="h6" gutterBottom>
-        
+        Search Detection Results
       </Typography>
       <Select
         value={latestOrAll}
