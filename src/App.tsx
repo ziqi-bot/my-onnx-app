@@ -135,72 +135,151 @@
 
 
 
+import React, { useState } from 'react';
+import { Box, Typography } from '@mui/material';
+import VideoUpload from './VideoUpload';
+import Results from './Results';
+import YOLO from './YOLO';
+import Search from './Search';
+import SearchResults from './SearchResults';
 
-
-
-
-import React from 'react';
-import { Table, TableHead, TableBody, TableRow, TableCell, Button } from '@mui/material';
-
-interface Result {
-  id: number;
-  pedestrian: number;
-  biker: number;
-  skater: number;
-  cart: number;
-  car: number;
-  bus: number;
-  created_at: string;
+export interface ProcessCompleteParams {
+  videoUrl: string;
 }
 
-interface SearchResultsProps {
-  searchResults: Result[];
-  mode: 'latest' | 'all';
-  onDelete: (id: number) => void;
-}
+const App: React.FC = () => {
+  const classNames = ["pedestrian", "biker", "skater", "cart", "car", "bus"];
+  const [searchResults, setSearchResults] = useState<any[]>([]);
+  const [averageCounts, setAverageCounts] = useState<number[]>(Array(classNames.length).fill(0));
+  const [frameCounts, setFrameCounts] = useState<number[][]>([]);
+  const [videoFile, setVideoFile] = useState<File | null>(null);
+  const [currentFrame, setCurrentFrame] = useState<number>(0);
+  const [searchMode, setSearchMode] = useState<'latest' | 'all'>('latest');
 
-const classNames = ["pedestrian", "biker", "skater", "cart", "car", "bus"];
+  const handleVideoUpload = (file: File) => {
+    setVideoFile(file);
+  };
 
-const SearchResults: React.FC<SearchResultsProps> = ({ searchResults, mode, onDelete }) => {
+  const handleProcessComplete = ({ videoUrl }: ProcessCompleteParams) => {
+    console.log('Video processing completed');
+    setVideoFile(null); // Clear video file after processing
+
+    // Calculate average counts using a new variable
+    if (frameCounts.length > 0) {
+      const totalCounts = Array(classNames.length).fill(0);
+      frameCounts.forEach(counts => {
+        counts.forEach((count, index) => {
+          totalCounts[index] += count;
+        });
+      });
+
+      const averageCounts = totalCounts.map(count => Math.ceil(count / frameCounts.length)); // Round up
+      console.log('Average Counts:', averageCounts);
+      setAverageCounts(averageCounts);
+
+      // Upload detection results to the backend
+      const formData = new FormData();
+      formData.append('averageCounts', JSON.stringify(averageCounts));
+      fetch(`${process.env.REACT_APP_API_URL}/saveResults`, {
+        method: 'POST',
+        body: formData,
+      })
+        .then(response => response.json())
+        .then(data => {
+          console.log('Response from server:', data);
+        })
+        .catch(error => {
+          console.error('Error uploading data:', error);
+        });
+
+      // 清空中间变量
+      setFrameCounts([]);
+      setCurrentFrame(0);
+    }
+  };
+
+  const handleFrameProcessed = (counts: number[], frameNumber: number) => {
+    setFrameCounts(prev => {
+      const updatedFrameCounts = [...prev, counts];
+
+      // Update average counts in real-time
+      if (updatedFrameCounts.length > 0) {
+        const totalCounts = Array(classNames.length).fill(0);
+        updatedFrameCounts.forEach(counts => {
+          counts.forEach((count, index) => {
+            totalCounts[index] += count;
+          });
+        });
+
+        const averageCounts = totalCounts.map(count => Math.ceil(count / updatedFrameCounts.length)); // Round up
+        setAverageCounts(averageCounts);
+      }
+
+      return updatedFrameCounts;
+    });
+
+    setCurrentFrame(frameNumber);
+  };
+
+  const handleSearchResults = (results: any[], mode: 'latest' | 'all') => {
+    setSearchResults(results);
+    setSearchMode(mode);
+  };
+
+  const handleDelete = async (id: number) => {
+    try {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/results/${id}`, {
+        method: 'DELETE',
+      });
+      const data = await response.json();
+      console.log('Response from server:', data);
+
+      if (response.ok) {
+        setSearchResults(prevResults => prevResults.filter(result => result.id !== id));
+      } else {
+        console.error('Error deleting data:', data.error);
+      }
+    } catch (error) {
+      console.error('Error deleting data:', error);
+    }
+  };
+
   return (
-    <Table>
-      <TableHead>
-        <TableRow>
-          <TableCell>{mode === 'latest' ? 'Class' : 'File'}</TableCell>
-          <TableCell>Details</TableCell>
-          {mode === 'all' && <TableCell>Action</TableCell>}
-        </TableRow>
-      </TableHead>
-      <TableBody>
-        {mode === 'latest' ? (
-          classNames.map((className, index) => (
-            <TableRow key={index}>
-              <TableCell>{className}</TableCell>
-              <TableCell>{searchResults.length > 0 ? searchResults[0][className as keyof Result] : 0}</TableCell>
-            </TableRow>
-          ))
-        ) : (
-          searchResults.map((result, index) => (
-            <TableRow key={index}>
-              <TableCell>{result.id}</TableCell>
-              <TableCell>
-                {classNames.map((className) => (
-                  <div key={className}>
-                    {className}: {result[className as keyof Result] !== undefined ? result[className as keyof Result] : 0}
-                  </div>
-                ))}
-              </TableCell>
-              <TableCell>
-                <Button variant="contained" color="secondary" onClick={() => onDelete(result.id)}>
-                  Delete
-                </Button>
-              </TableCell>
-            </TableRow>
-          ))
-        )}
-      </TableBody>
-    </Table>
+    <Box sx={{ fontFamily: 'Roboto', padding: '20px' }}>
+      <Box className="search-bar" sx={{ padding: '20px', border: '1px solid #ccc', borderRadius: '4px', marginBottom: '20px' }}>
+        <Typography variant="h5" gutterBottom>
+          Search Detection Results
+        </Typography>
+        <Search onSearchResults={handleSearchResults} />
+      </Box>
+
+      <Box className="data-grid" sx={{ padding: '20px', border: '1px solid #ccc', borderRadius: '4px', marginBottom: '20px' }}>
+        <Typography variant="h5" gutterBottom>
+          Search Results
+        </Typography>
+        <SearchResults searchResults={searchResults} mode={searchMode} onDelete={handleDelete} />
+      </Box>
+
+      <Box className="upload-section" sx={{ padding: '20px', border: '1px solid #ccc', borderRadius: '4px', marginBottom: '20px' }}>
+        <Typography variant="h5" gutterBottom>
+          Upload Video
+        </Typography>
+        <VideoUpload onVideoUpload={handleVideoUpload} />
+      </Box>
+
+      {videoFile && (
+        <YOLO videoFile={videoFile} onProcessComplete={handleProcessComplete} onFrameProcessed={handleFrameProcessed} />
+      )}
+
+      <Results
+        averageCounts={averageCounts}
+        frameCounts={frameCounts[frameCounts.length - 1] || []}
+        classNames={classNames}
+        loading={false}
+        currentFrame={currentFrame}
+      />
+    </Box>
   );
 };
 
-export default SearchResults;
+export default App;

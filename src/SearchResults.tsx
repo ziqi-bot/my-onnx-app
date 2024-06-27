@@ -85,11 +85,6 @@
 
 
 
-
-
-
-
-
 import React from 'react';
 import { Table, TableHead, TableBody, TableRow, TableCell, Button } from '@mui/material';
 
@@ -119,7 +114,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({ searchResults, mode, onDe
         <TableRow>
           <TableCell>{mode === 'latest' ? 'Class' : 'File'}</TableCell>
           <TableCell>Details</TableCell>
-          {mode === 'all' && <TableCell>Action</TableCell>}
+          {mode === 'all' && <TableCell>Actions</TableCell>}
         </TableRow>
       </TableHead>
       <TableBody>
@@ -127,7 +122,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({ searchResults, mode, onDe
           classNames.map((className, index) => (
             <TableRow key={index}>
               <TableCell>{className}</TableCell>
-              <TableCell>{searchResults.length > 0 ? searchResults[0][className as keyof Result] : 0}</TableCell>
+              <TableCell>{searchResults.length > 0 ? (searchResults[0] as any)[className] : 0}</TableCell>
             </TableRow>
           ))
         ) : (
@@ -137,7 +132,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({ searchResults, mode, onDe
               <TableCell>
                 {classNames.map((className) => (
                   <div key={className}>
-                    {className}: {result[className as keyof Result] !== undefined ? result[className as keyof Result] : 0}
+                    {className}: {(result as any)[className] !== undefined ? (result as any)[className] : 0}
                   </div>
                 ))}
               </TableCell>
