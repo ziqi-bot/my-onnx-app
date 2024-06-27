@@ -84,6 +84,14 @@
 
 
 
+
+
+
+
+
+
+
+
 import React from 'react';
 import { Table, TableHead, TableBody, TableRow, TableCell } from '@mui/material';
 
@@ -119,7 +127,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({ searchResults, mode }) =>
           classNames.map((className, index) => (
             <TableRow key={index}>
               <TableCell>{className}</TableCell>
-              <TableCell>{searchResults.length > 0 ? (searchResults[0] as any)[className] : 0}</TableCell>
+              <TableCell>{searchResults.length > 0 ? searchResults[0][className as keyof Result] : 0}</TableCell>
             </TableRow>
           ))
         ) : (
