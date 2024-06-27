@@ -84,9 +84,8 @@
 
 
 
-
 import React from 'react';
-import { Table, TableHead, TableBody, TableRow, TableCell, Button } from '@mui/material';
+import { Table, TableHead, TableBody, TableRow, TableCell } from '@mui/material';
 
 interface Result {
   id: number;
@@ -102,19 +101,17 @@ interface Result {
 interface SearchResultsProps {
   searchResults: Result[];
   mode: 'latest' | 'all';
-  onDelete: (id: number) => void;
 }
 
 const classNames = ["pedestrian", "biker", "skater", "cart", "car", "bus"];
 
-const SearchResults: React.FC<SearchResultsProps> = ({ searchResults, mode, onDelete }) => {
+const SearchResults: React.FC<SearchResultsProps> = ({ searchResults, mode }) => {
   return (
     <Table>
       <TableHead>
         <TableRow>
           <TableCell>{mode === 'latest' ? 'Class' : 'File'}</TableCell>
           <TableCell>Details</TableCell>
-          {mode === 'all' && <TableCell>Actions</TableCell>}
         </TableRow>
       </TableHead>
       <TableBody>
@@ -135,11 +132,6 @@ const SearchResults: React.FC<SearchResultsProps> = ({ searchResults, mode, onDe
                     {className}: {(result as any)[className] !== undefined ? (result as any)[className] : 0}
                   </div>
                 ))}
-              </TableCell>
-              <TableCell>
-                <Button variant="contained" color="secondary" onClick={() => onDelete(result.id)}>
-                  Delete
-                </Button>
               </TableCell>
             </TableRow>
           ))
