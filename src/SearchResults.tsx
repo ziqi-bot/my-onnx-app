@@ -3,6 +3,22 @@
 
 
 
+
+// // {
+// //   "id": 2,
+// //   "pedestrian": 11,
+// //   "biker": 1,
+// //   "skater": 0,
+// //   "cart": 0,
+// //   "car": 2,
+// //   "bus": 0,
+// //   "created_at": "2024-06-27T15:46:32.943Z"
+// // }
+
+
+
+
+
 // import React from 'react';
 // import { Table, TableHead, TableBody, TableRow, TableCell } from '@mui/material';
 
@@ -69,23 +85,23 @@
 
 
 
-// {
-//   "id": 2,
-//   "pedestrian": 11,
-//   "biker": 1,
-//   "skater": 0,
-//   "cart": 0,
-//   "car": 2,
-//   "bus": 0,
-//   "created_at": "2024-06-27T15:46:32.943Z"
-// }
+
+
+
+
+
+
+
+
+
+
 
 
 
 
 
 import React from 'react';
-import { Table, TableHead, TableBody, TableRow, TableCell } from '@mui/material';
+import { Table, TableHead, TableBody, TableRow, TableCell, Button } from '@mui/material';
 
 interface Result {
   id: number;
@@ -101,17 +117,19 @@ interface Result {
 interface SearchResultsProps {
   searchResults: Result[];
   mode: 'latest' | 'all';
+  onDelete: (id: number) => void;
 }
 
 const classNames = ["pedestrian", "biker", "skater", "cart", "car", "bus"];
 
-const SearchResults: React.FC<SearchResultsProps> = ({ searchResults, mode }) => {
+const SearchResults: React.FC<SearchResultsProps> = ({ searchResults, mode, onDelete }) => {
   return (
     <Table>
       <TableHead>
         <TableRow>
           <TableCell>{mode === 'latest' ? 'Class' : 'File'}</TableCell>
           <TableCell>Details</TableCell>
+          {mode === 'all' && <TableCell>Actions</TableCell>}
         </TableRow>
       </TableHead>
       <TableBody>
@@ -132,6 +150,11 @@ const SearchResults: React.FC<SearchResultsProps> = ({ searchResults, mode }) =>
                     {className}: {(result as any)[className] !== undefined ? (result as any)[className] : 0}
                   </div>
                 ))}
+              </TableCell>
+              <TableCell>
+                <Button variant="contained" color="secondary" onClick={() => onDelete(result.id)}>
+                  Delete
+                </Button>
               </TableCell>
             </TableRow>
           ))
