@@ -105,7 +105,7 @@ const Search: React.FC<SearchProps> = ({ onSearchResults }) => {
   return (
     <Box>
       <Typography variant="h6" gutterBottom>
-        Search Detection Results
+        Detection Results
       </Typography>
       <Select
         value={latestOrAll}

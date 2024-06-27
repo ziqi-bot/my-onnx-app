@@ -293,7 +293,7 @@ const App: React.FC = () => {
     <Box sx={{ fontFamily: 'Roboto', padding: '20px' }}>
       <Box className="search-bar" sx={{ padding: '20px', border: '1px solid #ccc', borderRadius: '4px', marginBottom: '20px' }}>
         <Typography variant="h5" gutterBottom>
-          Search Detection Results
+          Search DATABASE
         </Typography>
         <Search onSearchResults={handleSearchResults} />
       </Box>
