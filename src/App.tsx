@@ -45,7 +45,7 @@ const App: React.FC = () => {
       // Upload detection results to the backend
       const formData = new FormData();
       formData.append('averageCounts', JSON.stringify(averageCounts));
-      fetch(`${process.env.REACT_APP_API_URL}saveResults`, {
+      fetch(`${process.env.REACT_APP_API_URL}/saveResults`, {
         method: 'POST',
         body: formData,
       })
