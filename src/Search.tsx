@@ -73,16 +73,19 @@ const Search: React.FC<SearchProps> = ({ onSearchResults }) => {
   const [latestOrAll, setLatestOrAll] = useState<'latest' | 'all'>('latest');
 
   const handleSearch = async () => {
-    const apiUrl = latestOrAll === 'latest' ? 'api/results' : 'api/allResults';
-
+    const apiUrl = latestOrAll === 'latest' ? '/api/results' : '/api/allResults';
+  
     try {
-      const response = await fetch(`${process.env.REACT_APP_API_URL}${apiUrl}`);
+      // Remove any double slashes except for the http(s) part
+      const fullUrl = `${process.env.REACT_APP_API_URL}${apiUrl}`.replace(/([^:]\/)\/+/g, "$1");
+      const response = await fetch(fullUrl);
       const data = await response.json();
       onSearchResults(data, latestOrAll);
     } catch (error) {
       console.error('Error fetching search results:', error);
     }
   };
+  
 
   return (
     <Box>
