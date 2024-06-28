@@ -186,6 +186,9 @@ const App: React.FC = () => {
         <Typography variant="h5" gutterBottom>
           Search Results
         </Typography>
+        <Typography variant="subtitle2" gutterBottom>
+         Average Detections Per Frame
+        </Typography>
         <SearchResults searchResults={searchResults} mode={searchMode} onDelete={handleDelete} />
       </Box>
 

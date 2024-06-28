@@ -18,7 +18,7 @@ const Results: React.FC<ResultsProps> = ({ averageCounts, classNames, loading, f
 
     let message = null;
     if (frameCounts[pedestrianIndex] > 20 || frameCounts[bikerIndex] > 10) {
-      message = "High crowd density!";
+      message = "High Traffic Density!";
     }
 
     if (message) {
@@ -26,7 +26,7 @@ const Results: React.FC<ResultsProps> = ({ averageCounts, classNames, loading, f
       // Set a timeout to clear the alert after 5 seconds
       const timeout = setTimeout(() => {
         setAlertMessage(null);
-      }, 5000);
+      }, 1000);
       return () => clearTimeout(timeout); // Clear the timeout if the component unmounts or the effect re-runs
     }
   }, [frameCounts, classNames, currentFrame]);
@@ -35,7 +35,7 @@ const Results: React.FC<ResultsProps> = ({ averageCounts, classNames, loading, f
     if (alertMessage) {
       const timeout = setTimeout(() => {
         setAlertMessage(null);
-      }, 800);
+      }, 1000);
       return () => clearTimeout(timeout); // Clear the timeout if the component unmounts or the effect re-runs
     }
   }, [alertMessage]);
